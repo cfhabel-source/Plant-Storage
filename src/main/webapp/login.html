@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · Plant Storage</title>
+  <link rel="stylesheet" href="login.css">
+  <script src="login.js" defer></script>
+</head>
+<body>
+  <main class="login-card">
+    <p class="eyebrow">YOUR PRIVATE COLLECTION</p>
+    <h1>Plant Storage</h1>
+    <p>Sign in to view and care for your plants.</p>
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input id="username" name="username" autocomplete="username" maxlength="100" required autofocus>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" required>
+      <button type="submit" id="signInButton">Sign in</button>
+    </form>
+    <p id="loginStatus" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>

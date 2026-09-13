@@ -1,0 +1,23 @@
+# One process for one client. Choose the plan in Render; nothing here purchases hosting.
+services:
+  - type: web
+    name: plant-storage
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    numInstances: 1
+    envVars:
+      - key: APP_USERNAME
+        sync: false
+      - key: APP_PASSWORD_HASH
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: false
+      - key: GOOGLE_FOLDER_ID
+        sync: false
+      - key: GOOGLE_JSON_FILE_ID
+        sync: false

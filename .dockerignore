@@ -1,0 +1,15 @@
+**
+!Dockerfile
+!build.gradle.kts
+!settings.gradle.kts
+!src/
+!src/**
+**/.env*
+**/.login.properties
+**/credentials*.json
+**/client_secret*.json
+**/tokens/**
+**/*.db
+**/*.sqlite*
+src/main/webapp/photos/**
+**/*.class

@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+pre {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.plant-card {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    background: #f9f9f9;
+}
+
+.plant-photo {
+    width: 150px;
+    height: auto;
+    margin: 5px;
+    border-radius: 6px;
+}
+
+.upload-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-btn:hover {
+    background: #45a049;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}

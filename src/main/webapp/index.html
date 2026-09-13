@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plant Storage</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js" defer></script>
+    <script src="script.js" defer></script>
+<link rel="stylesheet" href="identify.css"><script src="identify.js" defer></script></head>
+
+<body>
+<h1>Plant Storage</h1>
+<button type="button" id="logoutButton">Sign out</button><p id="authStatus" role="status"></p>
+<details id="identifyPanel"><summary>Identify a plant</summary><p>Compare a plant with the 32 entries in your collection. Start with leaves; flowers are optional. Results are possible matches, not a confirmed identification.</p><div id="plantIdentifier" aria-live="polite"></div></details><p id="identifySelectionStatus" role="status"></p>
+<h2>Add a Plant</h2>
+
+<input type="text" id="searchInput" placeholder="Search plants...">
+
+<select id="sortSelect">
+    <option value="name">Sort by Name</option>
+    <option value="species">Sort by Species</option>
+    <option value="location">Sort by Location</option>
+    <option value="acquiredAt">Sort by Location Acquired</option>
+</select>
+
+<form id="plantForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="text" id="species" placeholder="Species">
+    <input type="text" id="location" placeholder="Location">
+    <input type="text" id="acquiredAt" placeholder="Acquired At">
+    <input type="text" id="careInstructions" placeholder="Care Instructions">
+
+    <textarea id="notes" placeholder="Notes"></textarea>
+
+    <button type="submit">Add Plant</button>
+</form>
+
+<button id="loadPlantsBtn">Load Plants</button>
+<div id="plantsContainer"></div>
+
+<div id="singlePlantContainer"></div>
+
+<!-- Removed duplicate <pre id="output"> -->
+</body>
+</html>
