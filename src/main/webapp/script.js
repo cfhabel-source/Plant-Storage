@@ -56,14 +56,47 @@ document.getElementById("plantForm").addEventListener("submit", async (e) => {
 // -------------------------------
 // LOAD ALL PLANTS
 // -------------------------------
-async function loadPlants() {
-    try {
-        const response = await fetch("/plants/");
-        const plants = await response.json();
-        renderPlants(plants);
-    } catch (err) {
-        console.error("LOAD ALL ERROR:", err);
+let allPlants = [];
+let plantsLoaded = false;
+let pendingLoad = null;
+function searchStatus(message) {
+    let status = document.getElementById("searchStatus");
+    if (!status) {
+        status = document.createElement("p");
+        status.id = "searchStatus";
+        status.setAttribute("role", "status");
+        document.getElementById("plantsContainer").before(status);
     }
+    status.textContent = message;
+}
+async function loadPlants() {
+    if (pendingLoad) return pendingLoad;
+    searchStatus("Loading plants...");
+    pendingLoad = (async () => {
+        try {
+            const response = await fetch("/plants/");
+            if (!response.ok) throw new Error("Could not load plants (" + response.status + ")");
+            const plants = await response.json();
+            if (!Array.isArray(plants)) throw new Error("Unexpected plant data");
+            allPlants = plants.filter(p => p && Number.isSafeInteger(p.id));
+            plantsLoaded = true;
+            applySearchAndSort();
+        } catch (err) {
+            console.error("LOAD ALL ERROR:", err);
+            searchStatus("Could not refresh plants. Click Load Plants to retry.");
+        }
+    })();
+    try { await pendingLoad; } finally { pendingLoad = null; }
+}
+function applySearchAndSort() {
+    const keyword = document.getElementById("searchInput").value.trim().toLocaleLowerCase("de");
+    const fields = ["name", "species", "location", "acquiredAt", "notes", "careInstructions"];
+    const terms = keyword.split(/\s+/).filter(Boolean);
+    const filtered = allPlants.filter(plant => terms.every(term =>
+        fields.some(field => String(plant[field] ?? "").toLocaleLowerCase("de").includes(term))
+    ));
+    renderPlants(sortPlants(filtered, document.getElementById("sortSelect").value));
+    searchStatus(filtered.length ? `${filtered.length} of ${allPlants.length} plants` : "No matching plants.");
 }
 
 function escapeHtml(value) {
@@ -85,31 +118,10 @@ function highlight(value, keyword) {
     return result + escapeHtml(text.slice(offset));
 }
 
-function fuzzyMatch(text, keyword) {
-    if (!keyword) return true;
-
-    text = String(text ?? "").toLowerCase();
-    keyword = keyword.toLowerCase();
-
-    let ti = 0;
-    let ki = 0;
-
-    while (ti < text.length && ki < keyword.length) {
-        if (text[ti] === keyword[ki]) {
-            ki++;
-        }
-        ti++;
-    }
-
-    return ki === keyword.length;
-}
-
 function sortPlants(plants, sortKey) {
-    return plants.sort((a, b) => {
-        const A = (a[sortKey] || "").toLowerCase();
-        const B = (b[sortKey] || "").toLowerCase();
-        return A.localeCompare(B);
-    });
+    return [...plants].sort((a, b) =>
+        String(a[sortKey] ?? "").localeCompare(String(b[sortKey] ?? ""), "de", {sensitivity: "base"})
+    );
 }
 
 // -------------------------------
@@ -298,42 +310,9 @@ document.getElementById("loadPlantsBtn").addEventListener("click", loadPlants);
 // -------------------------------
 // SEARCH + SORT
 // -------------------------------
-document.getElementById("searchInput").addEventListener("input", async (e) => {
-    const keyword = e.target.value.trim();
-
-    const response = await fetch(`/plants/?search=${encodeURIComponent(keyword)}`);
-    let plants = await response.json();
-
-    plants = plants.filter(p =>
-        fuzzyMatch(p.name, keyword) ||
-        fuzzyMatch(p.species, keyword) ||
-        fuzzyMatch(p.location, keyword) ||
-        fuzzyMatch(p.notes, keyword) ||
-        fuzzyMatch(p.careInstructions, keyword)
-    );
-
-    const sortKey = document.getElementById("sortSelect").value;
-    plants = sortPlants(plants, sortKey);
-
-    renderPlants(plants);
-});
-
-document.getElementById("sortSelect").addEventListener("change", async () => {
-    const keyword = document.getElementById("searchInput").value.trim();
-
-    const response = await fetch(`/plants/?search=${encodeURIComponent(keyword)}`);
-    let plants = await response.json();
-
-    plants = plants.filter(p =>
-        fuzzyMatch(p.name, keyword) ||
-        fuzzyMatch(p.species, keyword) ||
-        fuzzyMatch(p.location, keyword) ||
-        fuzzyMatch(p.notes, keyword) ||
-        fuzzyMatch(p.careInstructions, keyword)
-    );
-
-    const sortKey = document.getElementById("sortSelect").value;
-    plants = sortPlants(plants, sortKey);
-
-    renderPlants(plants);
-});
+function updatePlantView() {
+    if (plantsLoaded) applySearchAndSort();
+    else loadPlants();
+}
+document.getElementById("searchInput").addEventListener("input", updatePlantView);
+document.getElementById("sortSelect").addEventListener("change", updatePlantView);
